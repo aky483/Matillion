@@ -1,0 +1,171 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "Create Table 2"
+      parameters:
+        componentName: "Start"
+    Create Table 2:
+      type: "create-table-v2"
+      transitions:
+        success:
+        - "S3 Load"
+      parameters:
+        componentName: "Create Table 2"
+        createMethod: "Replace"
+        database: "DEMODATABASE"
+        schema: "DEMOSCHEMA"
+        table: "DEMOGRAPHIC"
+        snowflakeTableType: "Permanent"
+        columns:
+        - - "CustomerID"
+          - "NUMBER"
+          - "10"
+          - ""
+          - ""
+          - "Yes"
+          - "Yes"
+          - ""
+          - ""
+        - - "LastName"
+          - "VARCHAR"
+          - "60"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "FirstName"
+          - "VARCHAR"
+          - "60"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "BirthDate"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "Gender"
+          - "VARCHAR"
+          - "60"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "ParticipantType"
+          - "VARCHAR"
+          - "60"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "RegionID"
+          - "NUMBER"
+          - "10"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "MaritalStatus"
+          - "VARCHAR"
+          - "15"
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        - "CustomerID"
+        clusteringKeys:
+        dataRetentionTimeInDays:
+        comment:
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+    S3 Load:
+      type: "s3-load"
+      parameters:
+        componentName: "S3 Load"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://matillion-aakash-awa/Demographic_Data"
+        pattern: ".*"
+        encryption: "None"
+        warehouse: "DEMOWAREHOUSE"
+        database: "DEMODATABASE"
+        schema: "DEMOSCHEMA"
+        targetTable: "DEMOGRAPHIC"
+        loadColumns:
+        - "CustomerID"
+        - "LastName"
+        - "FirstName"
+        - "BirthDate"
+        - "Gender"
+        - "ParticipantType"
+        - "RegionID"
+        - "MaritalStatus"
+        format: "[Custom]"
+        fileType: "CSV"
+        compression: "AUTO"
+        recordDelimiter: ""
+        fieldDelimiter:
+        skipHeader: "1"
+        skipBlankLines: "False"
+        dateFormat:
+        timeFormat:
+        timestampFormat:
+        escape:
+        escapeUnenclosedField:
+        trimSpace: "False"
+        fieldOptionallyEnclosed:
+        nullIf:
+        errorOnColumnCountMismatch: "False"
+        emptyFieldAsNull: "True"
+        replaceInvalidCharacters: "False"
+        encodingType:
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "False"
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+design:
+  components:
+    Start:
+      position:
+        x: -190
+        "y": -50
+      tempMetlId: 1
+    Create Table 2:
+      position:
+        x: -30
+        "y": 30
+      tempMetlId: 3
+    S3 Load:
+      position:
+        x: 130
+        "y": 30
+      tempMetlId: 4
